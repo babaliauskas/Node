@@ -11,7 +11,7 @@ MongoClient.connect(
     console.log('Connected to MongoDB server');
     const db = client.db('TodoApp');
 
-    db.collection('Users')
+    db.collection('Todos')
       .find()
       .toArray()
       .then(docs => {
