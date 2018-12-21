@@ -27,6 +27,19 @@ app.post('/todos', (req, res) => {
     .catch(e => res.status(400).send(e));
 });
 
+app.post('/users', (req, res) => {
+  const body = _.pick(req.body, ['email', 'password']);
+  const user = new User(body);
+
+  user
+    .save()
+    .then(() => user.generateAuthToken())
+    .then(token => {
+      res.header('x-auth', token).send(user);
+    })
+    .catch(e => res.status(400).send(e));
+});
+
 app.get('/todos', (req, res) => {
   Todo.find()
     .then(data => {
@@ -55,7 +68,6 @@ app.delete('/todos/:id', (req, res) => {
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
-
   Todo.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
