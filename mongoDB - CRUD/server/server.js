@@ -8,6 +8,7 @@ const { ObjectID } = require('mongodb');
 const { mongoose } = require('../server/db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('../server/models/user');
+const { authenticate } = require('./middleware/authenticate');
 
 const app = express();
 const port = 3000;
@@ -38,6 +39,10 @@ app.post('/users', (req, res) => {
       res.header('x-auth', token).send(user);
     })
     .catch(e => res.status(400).send(e));
+});
+
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
 });
 
 app.get('/todos', (req, res) => {
