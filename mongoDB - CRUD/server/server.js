@@ -83,6 +83,7 @@ app.delete('/todos/:id', (req, res) => {
     .catch(e => res.status(400).send());
 });
 
+// PATCH /todos/:id
 app.patch('/todos/:id', (req, res) => {
   const id = req.params.id;
   const body = _.pick(req.body, ['text', 'completed']);
@@ -107,6 +108,21 @@ app.patch('/todos/:id', (req, res) => {
       res.status(200).send({ data });
     })
     .catch(e => res.status(400).send());
+});
+
+// POST /users/login
+app.post('/users/login', (req, res) => {
+  const body = _.pick(req.body, ['email', 'password']);
+
+  User.findByCredentials(body.email, body.password)
+    .then(user => {
+      return user.generateAuthToken().then(token => {
+        res.header('x-auth', token).send(user);
+      });
+    })
+    .catch(e => {
+      res.status(400).send();
+    });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
